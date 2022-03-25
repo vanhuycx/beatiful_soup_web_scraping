@@ -5,15 +5,16 @@ import sqlite3
 try:
     sqliteConnection = sqlite3.connect('SQLite_Python.db')
     sqlite_create_table_query = '''CREATE TABLE Books (
+                                    id INTEGER PRIMARY KEY,
                                     title TEXT NOT NULL);'''
-
     drop_table = 'drop table if exists Books'
 
+    # Create cursor connection to db
     cursor = sqliteConnection.cursor()
     print("Successfully Connected to SQLite")
 
+    # Drop Books table if exists and create a new one
     cursor.execute(drop_table)
-
     cursor.execute(sqlite_create_table_query)
     sqliteConnection.commit()
     print("SQLite table created")
@@ -25,6 +26,7 @@ try:
         li_list = doc.find('section').find_all('div')[1].find('ol').find_all('li')
         for li_tag in li_list:
             li_index = li_list.index(li_tag)
+            print(li_index)
 
             book_title = li_tag.find('h3').string
             sqlite_insert_query = f'INSERT INTO Books (title)  VALUES  ({repr(f"{book_title}")})'
