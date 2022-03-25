@@ -25,12 +25,8 @@ try:
         doc = BeautifulSoup(result.text,'html.parser')
         li_list = doc.find('section').find_all('div')[1].find('ol').find_all('li')
         for li_tag in li_list:
-            li_index = li_list.index(li_tag)
-            print(li_index)
-
             book_title = li_tag.find('h3').string
             sqlite_insert_query = f'INSERT INTO Books (title)  VALUES  ({repr(f"{book_title}")})'
-
             count = cursor.execute(sqlite_insert_query)
             sqliteConnection.commit()
             print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
