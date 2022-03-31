@@ -19,6 +19,8 @@ try:
     sqliteConnection.commit()
     print("SQLite table created")
 
+    base_url =  'https://books.toscrape.com/catalogue/'
+
     for index in range(1,51):
         url = f'https://books.toscrape.com/catalogue/page-{index}.html'
         result = requests.get(url)
@@ -26,7 +28,7 @@ try:
         li_list = doc.find('section').find_all('div')[1].find('ol').find_all('li')
         for li_tag in li_list:
             book_title = li_tag.find('h3').string
-            sqlite_insert_query = f'INSERT INTO Books (title)  VALUES  ({repr(f"{book_title}")})'
+            sqlite_insert_query = f'INSERT INTO Books (title)  VALUES  ({repr("{0}".format(book_title))})'
             count = cursor.execute(sqlite_insert_query)
             sqliteConnection.commit()
             print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
