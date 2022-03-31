@@ -50,7 +50,7 @@ try:
             book_genre =  book_soup.find('ul',{'class':'breadcrumb'}).find_all('a')[2].string
             
             # sqlite_insert_query = f'INSERT INTO Books (title,price,in_stock,rating,genre)  VALUES  ({repr(f"{book_title}")},{price},{in_stock},\'{rating}\',\'{book_genre}\')'
-            sqlite_insert_query = f'INSERT INTO Books (title)  VALUES  ({repr(f"{book_title}")})'
+            sqlite_insert_query = f'INSERT INTO Books (title)  VALUES  ({repr("{0}".format(book_title))})'
 
             # print(sqlite_insert_query)
             count = cursor.execute(sqlite_insert_query)
