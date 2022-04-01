@@ -6,7 +6,7 @@ try:
     sqliteConnection = sqlite3.connect('SQLite_Python_test.db')
     sqlite_create_table_query = '''CREATE TABLE Books (
                                     id INTEGER PRIMARY KEY,                       
-                                    title BLOL NOT NULL,                   
+                                    title BLOB NOT NULL,                   
                                     price REAL NULL,
                                     in_stock INTEGER NULL,
                                     rating INTEGER NULL,
@@ -43,14 +43,14 @@ try:
             # Create the book article object
             book_article = book_soup.find('article')
             # Then, find information about book by finding the element and accessing the attribute(s)
-            book_title = book_article.find('h1').string
+            book_title = book_article.find('h1').string.replace("'", "&#39;") # Replace single quote with the UTF-8 representation
             price = book_article.find_all('p')[0].string[2:]
             in_stock = book_article.find_all('p')[1].get_text().split()[2][1:] # <i> in <p>.Cannot use string attr. Use get_text(). 
             rating = book_article.find_all('p')[2]['class'][1].lower()
             book_genre =  book_soup.find('ul',{'class':'breadcrumb'}).find_all('a')[2].string
             
-            # sqlite_insert_query = f'INSERT INTO Books (title,price,in_stock,rating,genre)  VALUES  ({repr(f"{book_title}")},{price},{in_stock},\'{rating}\',\'{book_genre}\')'
-            sqlite_insert_query = f'INSERT INTO Books (title)  VALUES  ({repr("{0}".format(book_title))})'
+            sqlite_insert_query = f'INSERT INTO Books (title,price,in_stock,rating,genre)  VALUES  ({repr(book_title)},{price},{in_stock},\'{rating}\',\'{book_genre}\')'
+            # sqlite_insert_query = f'INSERT INTO Books (title)  VALUES  ({repr(book_title)})'
 
             # print(sqlite_insert_query)
             count = cursor.execute(sqlite_insert_query)
