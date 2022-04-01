@@ -11,7 +11,8 @@ try:
                                     in_stock INTEGER NULL,
                                     rating INTEGER NULL,
                                     genre TEXT NULL,
-                                    description TEXT NULL                      
+                                    description TEXT NULL,                      
+                                    UPC TEXT NULL                      
                                     );'''
     drop_table = 'drop table if exists Books'
 
@@ -39,7 +40,6 @@ try:
             book_request =  requests.get(full_book_link)
             book_soup = BeautifulSoup(book_request.text,'html.parser')
             
-
             # Create the book article object
             book_article = book_soup.find('article')
             # Then, find information about book by finding the element and accessing the attribute(s)
@@ -48,18 +48,23 @@ try:
             in_stock = book_article.find_all('p')[1].get_text().split()[2][1:] 
             rating = book_article.find_all('p')[2]['class'][1].lower()
             book_genre =  book_soup.find('ul',{'class':'breadcrumb'}).find_all('a')[2].get_text()
-            description = ' '.join(book_soup.find_all('p')[3].get_text().split()[:25]) + '...' # Split and join 
+            description = ' '.join(book_soup.find_all('p')[3].get_text().replace("'", "&#39;").split()[:25]) + '...' # Split and join 25 beginning words
+            upc = book_article.find('table').find_all('tr')[0].find('td').get_text()
+            
+            
+            # product_type = book_article.find('table').find_all('tr')[1].find('td').get_text()
+            # tax = book_article.find('table').find_all('tr')[4].find('td').get_text()[2:]
+            # review_num = book_article.find('table').find_all('tr')[6].find('td').get_text()
+
 
             
-            # sqlite_insert_query = f'INSERT INTO Books (title,price,in_stock,rating,genre)  VALUES  ({repr(book_title)},{price},{in_stock},\'{rating}\',\'{book_genre}\')'
-            # #sqlite_insert_query = f'INSERT INTO Books (title)  VALUES  ({repr(book_title)})'
+            # sqlite_insert_query = f'INSERT INTO Books (title,price,in_stock,rating,genre,description)  VALUES  ({repr(book_title)},{price},{in_stock},\'{rating}\',\'{book_genre}\',\'{description}\')'
 
-            # print(sqlite_insert_query)
             # count = cursor.execute(sqlite_insert_query)
             # sqliteConnection.commit()
 
             print("Record inserted successfully into Books table ", cursor.rowcount)
-            print(book_title,price,in_stock,rating,book_genre,description)
+            print(book_title,price,in_stock,rating,book_genre,description,upc)
             print('----------------------------------------')
 
     cursor.close()

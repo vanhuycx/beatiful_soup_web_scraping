@@ -3,15 +3,16 @@ from bs4 import BeautifulSoup
 import sqlite3
 
 try:
-    sqliteConnection = sqlite3.connect('SQLite_Python_test.db')
+    sqliteConnection = sqlite3.connect('SQLite_Python.db')
     sqlite_create_table_query = '''CREATE TABLE Books (
                                     id INTEGER PRIMARY KEY,                       
-                                    title BLOL NOT NULL,                   
+                                    title TEXT NOT NULL,                   
                                     price REAL NULL,
                                     in_stock INTEGER NULL,
                                     rating INTEGER NULL,
-                                    genre TEXT NULL
-                                                                
+                                    genre TEXT NULL,
+                                    upc TEXT NULL,
+                                    description TEXT NULL                                                                  
                                     );'''
     drop_table = 'drop table if exists Books'
 
@@ -39,25 +40,24 @@ try:
             book_request =  requests.get(full_book_link)
             book_soup = BeautifulSoup(book_request.text,'html.parser')
             
-
             # Create the book article object
             book_article = book_soup.find('article')
             # Then, find information about book by finding the element and accessing the attribute(s)
-            book_title = book_article.find('h1').string
-            price = book_article.find_all('p')[0].string[2:]
-            in_stock = book_article.find_all('p')[1].get_text().split()[2][1:] # <i> in <p>.Cannot use string attr. Use get_text(). 
+            book_title = book_article.find('h1').get_text().replace("'", "&#39;") # Replace single quote with the UTF-8 representation
+            price = book_article.find_all('p')[0].get_text()[2:]
+            in_stock = book_article.find_all('p')[1].get_text().split()[2][1:] 
             rating = book_article.find_all('p')[2]['class'][1].lower()
-            book_genre =  book_soup.find('ul',{'class':'breadcrumb'}).find_all('a')[2].string
-            
-            # sqlite_insert_query = f'INSERT INTO Books (title,price,in_stock,rating,genre)  VALUES  ({repr(f"{book_title}")},{price},{in_stock},\'{rating}\',\'{book_genre}\')'
-            sqlite_insert_query = f'INSERT INTO Books (title)  VALUES  ({repr("{0}".format(book_title))})'
+            book_genre =  book_soup.find('ul',{'class':'breadcrumb'}).find_all('a')[2].get_text()
+            description = ' '.join(book_soup.find_all('p')[3].get_text().replace("'", "&#39;").split()[:25]) + '...' # Get 25 beginning words
+            upc = book_article.find('table').find_all('tr')[0].find('td').get_text()
 
-            # print(sqlite_insert_query)
+            # Insert data row into table
+            sqlite_insert_query = f'INSERT INTO Books (title,price,in_stock,rating,genre,upc,description)  VALUES  ({repr(book_title)},{price},{in_stock},\'{rating}\',\'{book_genre}\',\'{upc}\',\'{description}\')'
             count = cursor.execute(sqlite_insert_query)
             sqliteConnection.commit()
 
-            print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
-            print(book_title,price,in_stock,rating,book_genre)
+            print("Record inserted successfully into Books table ", cursor.rowcount)
+            print(book_title,price,in_stock,rating,book_genre,description,upc)
             print('----------------------------------------')
 
     cursor.close()
