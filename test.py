@@ -6,12 +6,12 @@ try:
     sqliteConnection = sqlite3.connect('SQLite_Python_test.db')
     sqlite_create_table_query = '''CREATE TABLE Books (
                                     id INTEGER PRIMARY KEY,                       
-                                    title BLOB NOT NULL,                   
+                                    title TEXT NOT NULL,                   
                                     price REAL NULL,
                                     in_stock INTEGER NULL,
                                     rating INTEGER NULL,
-                                    genre TEXT NULL
-                                                                
+                                    genre TEXT NULL,
+                                    description TEXT NULL                      
                                     );'''
     drop_table = 'drop table if exists Books'
 
@@ -45,19 +45,21 @@ try:
             # Then, find information about book by finding the element and accessing the attribute(s)
             book_title = book_article.find('h1').get_text().replace("'", "&#39;") # Replace single quote with the UTF-8 representation
             price = book_article.find_all('p')[0].get_text()[2:]
-            in_stock = book_article.find_all('p')[1].get_text().split()[2][1:] # <i> in <p>.Cannot use string attr. Use get_text(). 
+            in_stock = book_article.find_all('p')[1].get_text().split()[2][1:] 
             rating = book_article.find_all('p')[2]['class'][1].lower()
             book_genre =  book_soup.find('ul',{'class':'breadcrumb'}).find_all('a')[2].get_text()
+            description = ' '.join(book_soup.find_all('p')[3].get_text().split()[:25]) + '...' # Split and join 
+
             
-            sqlite_insert_query = f'INSERT INTO Books (title,price,in_stock,rating,genre)  VALUES  ({repr(book_title)},{price},{in_stock},\'{rating}\',\'{book_genre}\')'
-            # sqlite_insert_query = f'INSERT INTO Books (title)  VALUES  ({repr(book_title)})'
+            # sqlite_insert_query = f'INSERT INTO Books (title,price,in_stock,rating,genre)  VALUES  ({repr(book_title)},{price},{in_stock},\'{rating}\',\'{book_genre}\')'
+            # #sqlite_insert_query = f'INSERT INTO Books (title)  VALUES  ({repr(book_title)})'
 
             # print(sqlite_insert_query)
-            count = cursor.execute(sqlite_insert_query)
-            sqliteConnection.commit()
+            # count = cursor.execute(sqlite_insert_query)
+            # sqliteConnection.commit()
 
             print("Record inserted successfully into Books table ", cursor.rowcount)
-            print(book_title,price,in_stock,rating,book_genre)
+            print(book_title,price,in_stock,rating,book_genre,description)
             print('----------------------------------------')
 
     cursor.close()
