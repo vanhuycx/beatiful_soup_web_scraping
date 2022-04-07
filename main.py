@@ -12,13 +12,13 @@ try:
    # id INTEGER PRIMARY KEY, 
     # sqliteConnection = sqlite3.connect('SQLite_Python.db')
     sqlserver_create_table_query = '''CREATE TABLE Books (
-                                                       
-                                    title TEXT NOT NULL,                   
+                                    id INT IDENTITY(1,1) PRIMARY KEY,
+                                    title VARCHAR(500) NOT NULL,                   
                                     price REAL NULL,
-                                    in_stock INTEGER NULL,
-                                    rating VARCHAR(10) NULL,
+                                    in_stock INT NULL,
+                                    rating VARCHAR(10) NULL,    
                                     genre VARCHAR(40) NULL,
-                                    upc TEXT NULL,
+                                    upc VARCHAR(20) NULL,
                                     description TEXT NULL                                                                  
                                     );'''
     drop_table = 'drop table if exists Books'
