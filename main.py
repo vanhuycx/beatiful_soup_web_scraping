@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import pyodbc
 
+
 # In SQLServer run query 'SELECT @@SERVERNAME' to check the server's name
 Server = 'DESKTOP-13K0I1P'
 
@@ -14,7 +15,6 @@ try:
                                     id INT IDENTITY(1,1) PRIMARY KEY,
                                     title VARCHAR(500) NOT NULL,                   
                                     price REAL NULL,
-                                    in_stock INT NULL,
                                     rating VARCHAR(10) NULL,    
                                     genre VARCHAR(40) NULL,
                                     upc VARCHAR(20) NULL,
@@ -50,7 +50,7 @@ try:
             book_article = book_soup.find('article')
             # Then, find information about book by finding the element and accessing the attribute(s)
             book_title = book_article.find('h1').get_text().replace("'", "&#39;") # Replace single quote with the UTF-8 representation
-            price = book_article.find_all('p')[0].get_text()[2:]
+            price = book_article.find_all('p')[0].get_text()[2:] # string slicing
             in_stock = book_article.find_all('p')[1].get_text().split()[2][1:] 
             rating = book_article.find_all('p')[2]['class'][1].lower()
             book_genre =  book_soup.find('ul',{'class':'breadcrumb'}).find_all('a')[2].get_text()
