@@ -1,16 +1,15 @@
 import requests
 from bs4 import BeautifulSoup
-import sqlite3
 import pyodbc
 
-try:
+# In SQLServer run query 'SELECT @@SERVERNAME' to check the server's name
+Server = 'DESKTOP-13K0I1P'
 
+try:
     sqlServerCon = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-13K0I1P;'
+                      f'Server={Server};'
                       'Database=Books;'
                       'Trusted_Connection=yes;')
-   # id INTEGER PRIMARY KEY, 
-    # sqliteConnection = sqlite3.connect('SQLite_Python.db')
     sqlserver_create_table_query = '''CREATE TABLE Books (
                                     id INT IDENTITY(1,1) PRIMARY KEY,
                                     title VARCHAR(500) NOT NULL,                   
@@ -69,7 +68,6 @@ try:
 
     cursor.close()
 
-# except sqlite3.Error as error:
 except pyodbc.Error as error:
     print("Error while connecting to SqlServer - ", error)
 finally:
