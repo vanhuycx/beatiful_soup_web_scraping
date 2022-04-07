@@ -1,30 +1,37 @@
 import requests
 from bs4 import BeautifulSoup
 import sqlite3
+import pyodbc
 
 try:
-    sqliteConnection = sqlite3.connect('SQLite_Python.db')
-    sqlite_create_table_query = '''CREATE TABLE Books (
-                                    id INTEGER PRIMARY KEY,                       
+
+    sqlServerCon = pyodbc.connect('Driver={SQL Server};'
+                      'Server=DESKTOP-13K0I1P;'
+                      'Database=Books;'
+                      'Trusted_Connection=yes;')
+   # id INTEGER PRIMARY KEY, 
+    # sqliteConnection = sqlite3.connect('SQLite_Python.db')
+    sqlserver_create_table_query = '''CREATE TABLE Books (
+                                                       
                                     title TEXT NOT NULL,                   
                                     price REAL NULL,
                                     in_stock INTEGER NULL,
-                                    rating INTEGER NULL,
-                                    genre TEXT NULL,
+                                    rating VARCHAR(10) NULL,
+                                    genre VARCHAR(40) NULL,
                                     upc TEXT NULL,
                                     description TEXT NULL                                                                  
                                     );'''
     drop_table = 'drop table if exists Books'
 
     # Create cursor connection to db
-    cursor = sqliteConnection.cursor()
-    print("Successfully Connected to SQLite")
+    cursor = sqlServerCon.cursor()
+    print("Successfully Connected to SqlServer")
 
     # Drop Books table if exists and create a new one
     cursor.execute(drop_table)
-    cursor.execute(sqlite_create_table_query)
-    sqliteConnection.commit()
-    print("SQLite table created")
+    cursor.execute(sqlserver_create_table_query)
+    sqlServerCon.commit()
+    print("SqlServer table created")
 
     base_url =  'https://books.toscrape.com/catalogue/'
 
@@ -52,9 +59,9 @@ try:
             upc = book_article.find('table').find_all('tr')[0].find('td').get_text()
 
             # Insert data row into table
-            sqlite_insert_query = f'INSERT INTO Books (title,price,in_stock,rating,genre,upc,description)  VALUES  ({repr(book_title)},{price},{in_stock},\'{rating}\',\'{book_genre}\',\'{upc}\',\'{description}\')'
-            count = cursor.execute(sqlite_insert_query)
-            sqliteConnection.commit()
+            sqlserver_insert_query = f'INSERT INTO Books (title,price,in_stock,rating,genre,upc,description)  VALUES  ({repr(book_title)},{price},{in_stock},\'{rating}\',\'{book_genre}\',\'{upc}\',\'{description}\')'
+            count = cursor.execute(sqlserver_insert_query)
+            sqlServerCon.commit()
 
             print("Record inserted successfully into Books table ", cursor.rowcount)
             print(book_title,price,in_stock,rating,book_genre,description,upc)
@@ -62,9 +69,10 @@ try:
 
     cursor.close()
 
-except sqlite3.Error as error:
-    print("Error while connecting to sqliteDB - ", error)
+# except sqlite3.Error as error:
+except pyodbc.Error as error:
+    print("Error while connecting to SqlServer - ", error)
 finally:
-    if sqliteConnection:
-        sqliteConnection.close()
-        print("The SQLite connection is closed")
+    if sqlServerCon:
+        sqlServerCon.close()
+        print("The SqlServer connection is closed")
