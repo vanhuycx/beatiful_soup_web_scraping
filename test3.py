@@ -1,11 +1,12 @@
-word_m10_count = 0
-with open('lord_of_the_ring.txt','r') as file:
-    for line in file:
-        for word in line.split():
-           if len(word)>10:
-               word_m10_count+=1
+import pandas as pd
 
-print(word_m10_count)
+df = pd.read_csv('Customer.csv')
+
+print(df[(df['Payment Method']=='cash')])
+
+# print(df)
 
 
+# df = pd.DataFrame({"a": [1, 2, 3, 4]}, index=['A', 'b', 'C', 'd'])
+# print(df.sort_index())
 
