@@ -15,6 +15,7 @@ try:
                                     id INT IDENTITY(1,1) PRIMARY KEY,
                                     title VARCHAR(500) NOT NULL,                   
                                     price REAL NULL,
+                                    in_stock INTEGER NULL,
                                     rating VARCHAR(10) NULL,    
                                     genre VARCHAR(40) NULL,
                                     upc VARCHAR(20) NULL,
@@ -58,7 +59,7 @@ try:
             upc = book_article.find('table').find_all('tr')[0].find('td').get_text()
 
             # Insert data row into table
-            sqlserver_insert_query = f'INSERT INTO Books (title,price,in_stock,rating,genre,upc,description)  VALUES  ({repr(book_title)},{price},{in_stock},\'{rating}\',\'{book_genre}\',\'{upc}\',\'{description}\')'
+            sqlserver_insert_query = f'INSERT INTO Books_test_1  (title,price,in_stock,rating,genre,upc,description)  VALUES  ({repr(book_title)},{price},{in_stock},\'{rating}\',\'{book_genre}\',\'{upc}\',\'{description}\')'
             count = cursor.execute(sqlserver_insert_query)
             sqlServerCon.commit()
 
