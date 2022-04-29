@@ -4,7 +4,7 @@ import pyodbc
 
 
 # In SQLServer run query 'SELECT @@SERVERNAME' to check the server's name
-Server = 'DESKTOP-13K0I1P'
+Server = 'DESKTOP-13K0I1P' 
 
 try:
     sqlServerCon = pyodbc.connect('Driver={SQL Server};'
