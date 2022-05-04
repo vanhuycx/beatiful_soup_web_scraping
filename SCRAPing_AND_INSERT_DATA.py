@@ -59,7 +59,7 @@ try:
             upc = book_article.find('table').find_all('tr')[0].find('td').get_text()
 
             # Insert data row into table
-            sqlserver_insert_query = f'INSERT INTO Books_test_1  (title,price,in_stock,rating,genre,upc,description)  VALUES  ({repr(book_title)},{price},{in_stock},\'{rating}\',\'{book_genre}\',\'{upc}\',\'{description}\')'
+            sqlserver_insert_query = f'INSERT INTO Books  (title,price,in_stock,rating,genre,upc,description)  VALUES  ({repr(book_title)},{price},{in_stock},\'{rating}\',\'{book_genre}\',\'{upc}\',\'{description}\')'
             count = cursor.execute(sqlserver_insert_query)
             sqlServerCon.commit()
 
